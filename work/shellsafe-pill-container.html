@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShellSafe Pill Container · Avikhai Elijah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script type="importmap">
+  { "imports": {
+      "three": "../lib/three/build/three.module.js",
+      "three/addons/": "../lib/three/addons/"
+  } }
+  </script>
+</head>
+<body data-root="../" data-page="work">
+  <div data-include="nav"></div>
+
+  <section class="project-header" style="padding-bottom:0;">
+    <div class="wrap">
+      <span class="eyebrow">Featured Project · 02</span>
+      <h1>ShellSafe Pill Container</h1>
+      <p class="hook">A pocket pill case designed around one real user's fear of being seen taking medication in public.</p>
+      <div class="meta-strip">
+        <span class="meta-item">Group project: with Jordan Carey &amp; Will Savage</span>
+        <span class="meta-item">Fall 2024</span>
+        <span class="meta-item">Fabrication</span>
+        <span class="tag status-prototype">Prototype</span>
+        <a class="meta-item deck-link" href="../assets/projects/shellsafe/shellsafe-final-report.pdf" target="_blank" rel="noopener">View full deck (PDF)</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:1.5rem;">
+    <div class="wrap">
+      <div class="hero-visual">
+        <div class="viewer-3d" data-model="../assets/projects/shellsafe/shellsafe.glb"></div>
+      </div>
+
+      <h2>The Problem</h2>
+      <div class="section-block">
+        <p>Our fix-partner, "Jude," a young adult managing daily medication, was living with a pill container that "pops open due to its material choice and design," and skipped doses in public rather than risk being seen with an obviously medical object. The options he'd tried, in his own words, "all make me look like a grandpa."</p>
+        <p>Beyond the social discomfort, he had no reliable way to track whether he'd already taken a dose, and had improvised his own workaround: setting a vitamin gummy aside as a manual reminder. Our brief became a container discreet enough to use anywhere, durable enough to trust, and clear enough to remove the guesswork.</p>
+      </div>
+
+      <h2 class="mt-lg">Process</h2>
+      <div class="process-item">
+        <div class="process-media"><img src="../assets/projects/shellsafe/midfi-build-photos.png" alt="Mid-fidelity ShellSafe build: heat-bending acrylic over a jig, assembled clear shell" loading="lazy" /></div>
+        <div>
+          <p>We moved through low-, mid-, and high-fidelity builds, heat-bending acrylic over a jig for the mid-fidelity shell and prototyping a touch-activated, app-programmable indicator light designed to reset automatically after each dose. I developed the interview questions we used with Jude, contributed through concept generation and iteration, and fabricated the final high-fidelity prototype myself.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-media media-sm"><img src="../assets/projects/shellsafe/process-sketch-1.jpg" alt="Early ShellSafe concept sketches" loading="lazy" /></div>
+        <div>
+          <p>Our research combined one-on-one interviews, shadowing, and market analysis, narrowing the problem to three needs: protection, discretion, and tracking. Early concept exploration ranged from a simple modular case to "combo" products that folded the container into a wallet, bracelet, or water bottle. Jude rejected all of them, telling us a wallet would be "bulkier" and visible to "the teller or waiter." That feedback pushed our design back toward a standalone object.</p>
+        </div>
+      </div>
+      <h2 class="mt-lg">UI/UX: the companion app</h2>
+      <div class="section-block">
+        <p>ShellSafe isn't just the physical case: a companion app is where the indicator light actually gets configured. User testing surfaced that Jude "wouldn't mind an app just for setting the indicator resetting duration," so we designed and wireframed one in Adobe XD, screens shown below, letting him set the reset timing and light color to match how he actually wanted to be reminded.</p>
+      </div>
+      <div class="solution-gallery">
+        <img src="../assets/projects/shellsafe/app-wireframe-final.png" alt="ShellSafe companion app interface, Adobe XD wireframe screens" loading="lazy" />
+      </div>
+
+      <h2 class="mt-lg">Solution</h2>
+      <div class="solution-gallery">
+        <img src="../assets/projects/shellsafe/highfi-final-photos.png" alt="ShellSafe finished high-fidelity model" loading="lazy" />
+        <img class="media-sm" src="../assets/projects/shellsafe/process-sketch-2.jpg" alt="Cardboard mechanism prototype, early sliding-sleeve mockup" loading="lazy" />
+      </div>
+
+      <h2 class="mt-lg">Outcome / Reflection</h2>
+      <div class="section-block">
+        <p>User testing on the high-fidelity prototype showed Jude intuitively using the sliding sleeve without being told how, but it also surfaced what we hadn't fully solved. In our own reflection, we were direct about the gaps rather than smoothing them over: the vinyl sleeve stood in for the leather finish Jude actually wanted (a budget constraint), pill "rattle" inside the case was never fully eliminated, and the companion app added a second device dependency that a light built entirely into the case itself could have avoided.</p>
+        <p style="color:var(--text-muted); font-size:0.92rem;">A collaborative team effort rather than strictly delegated roles: every member touched most stages. My specific contributions: I developed the interview questions used with fix-partner Jude, contributed to concept generation and iteration, and fabricated the final prototype.</p>
+      </div>
+
+      <div class="project-footer-nav">
+        <a class="text-link" href="index.html">← Back to Work</a>
+        <a class="btn" href="go-transit-tracker.html">Next project: GO Transit Tracker →</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+
+  <script src="../js/include.js"></script>
+  <script type="module" src="../js/viewer.js"></script>
+</body>
+</html>

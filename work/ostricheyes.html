@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OstrichEyes · Avikhai Elijah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script type="importmap">
+  { "imports": {
+      "three": "../lib/three/build/three.module.js",
+      "three/addons/": "../lib/three/addons/"
+  } }
+  </script>
+</head>
+<body data-root="../" data-page="work">
+  <div data-include="nav"></div>
+
+  <section class="project-header" style="padding-bottom:0;">
+    <div class="wrap">
+      <span class="eyebrow">Featured Project · 05 · Hero project</span>
+      <h1>OstrichEyes</h1>
+      <p class="hook">A speculative privacy headset for a 2033 future where work has gone fully task-based, and where staying anonymous has become the safer way to live.</p>
+      <div class="meta-strip">
+        <span class="meta-item">Group project: "Team 3" with Logan Markowiak, Jordan Carey, Will Savage</span>
+        <span class="meta-item">Spring 2026</span>
+        <span class="meta-item">3D modeling/printing · UI/motion design</span>
+        <span class="tag status-concept">Concept (speculative)</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:1.5rem;">
+    <div class="wrap">
+      <div class="hero-visual">
+        <div class="viewer-3d" data-model="../assets/projects/ostricheyes/ostricheyes.glb"></div>
+      </div>
+
+      <h2>The Problem</h2>
+      <div class="section-block">
+        <p>OstrichEyes imagines a future where work has shifted from long-term careers to purely task-based gigs, and where AI-driven data collection has eroded privacy so far that people find more comfort in anonymity than in being seen. The premise is grounded in cited real-world signals rather than pure invention: a 2025 Stanford AI Index report's finding of a 56% surge in AI privacy incidents, and labour-market research pointing toward an increasingly task-based economy.</p>
+        <p>Inside that world, OstrichEyes, founded in 2033, is a privacy-and-assistance company selling a headset that conceals a worker's identity and the identities of the people around them while guiding them through each job.</p>
+      </div>
+
+      <h2 class="mt-lg">Process</h2>
+      <div class="process-item">
+        <div class="process-media"><img src="../assets/projects/ostricheyes/headset-render.png" alt="OstrichEyes headset render" loading="lazy" /></div>
+        <div>
+          <p>We put the headset through a real physical iteration before landing on its final form: an early prototype started from a 3D-printed sunglasses base, hand-modified with side blinders, over-ear headphones cut from parts sourced at Dollarama, and black electrical tape. We chose black deliberately, per our own notes, as "the most lonely colour," to emphasize isolation.</p>
+        </div>
+      </div>
+      <div class="process-item">
+        <div class="process-media"><img src="../assets/projects/ostricheyes/hud-patient-portal.png" alt="OstrichEyes HUD overlay, AR patient-portal view in a hospital corridor with check-in and treatment progress" loading="lazy" /></div>
+        <div>
+          <p>Our final concept resolved into three connected pieces: the headset itself (an AR lens overlay that censors the identifying features of other workers on-site), a Data Upload Terminal for consent and task onboarding, and a companion Task Finder app. We built the HUD overlay, the piece that sets this project apart from a straight product render, as an animated sequence layered over hospital-hallway footage, showing live task, patient, and location metadata alongside a real-time progress bar.</p>
+        </div>
+      </div>
+
+      <h2 class="mt-lg">UI/UX: the Task Finder app</h2>
+      <p>Alongside the headset and its HUD, the third piece of the concept is the companion app that actually distributes work: task-workers browse and accept jobs, track a live trust score, and get flagged if a task is dismissed for a safety violation. These are the interface screens I designed for it.</p>
+      <div class="solution-gallery">
+        <img src="../assets/projects/ostricheyes/app-ui-mockup-1.png" alt="OstrichEyes Task Finder app: job browsing, filters, and task-mode checklist screens" loading="lazy" />
+        <img src="../assets/projects/ostricheyes/app-ui-mockup-2.png" alt="OstrichEyes Task Finder app: trust-score, settings, and task-failed screens" loading="lazy" />
+      </div>
+
+      <p class="mt-lg">The Task Finder app is built out as a working prototype, not just static screens. Try it below: browse jobs, open one, and step through the flow yourself.</p>
+      <div class="phone-demo">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <iframe src="https://ostrich-eye-flow.base44.app" title="OstrichEyes Task Finder app, interactive prototype" loading="lazy"></iframe>
+          </div>
+        </div>
+        <a class="deck-link" href="https://ostrich-eye-flow.base44.app" target="_blank" rel="noopener">Open full app in new tab</a>
+      </div>
+
+      <h2 class="mt-lg">Outcome / Reflection</h2>
+      <div class="section-block">
+        <p>Our closing reflection frames the project as a synthesis exercise: "all our explorations had come together to produce one speculative future which was built up by strong signaling from the STEEP-V, and each of our pathways acting as a piece in the larger speculative future." Mid-process, we also raised our own central risk rather than glossing over it, a genuine open question about whether the object or the premise was doing the real work: "is OstrichEyes doing too much? Maybe our scenario deals too much with the glasses which make the shift, and not the shift which results in the glasses."</p>
+        <p style="color:var(--text-muted); font-size:0.92rem;">My own account of my role: "I acted as a key member in developing the app interfaces, ensuring all deliverables were met before submissions, was a key role in the video development, printed the 3D models, and worked out the details and validity of each of the iterations throughout this project."</p>
+      </div>
+
+      <div class="project-footer-nav">
+        <a class="text-link" href="index.html">← Back to Work</a>
+        <a class="btn" href="the-dugout.html">Next project: The Dugout: Bluejays Garden →</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+
+  <script src="../js/include.js"></script>
+  <script type="module" src="../js/viewer.js"></script>
+</body>
+</html>

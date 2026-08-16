@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avikhai Elijah · Industrial Design</title>
+  <meta name="description" content="Making everyday products work harder, so people don't have to. Portfolio of Avikhai Elijah, Industrial Design, OCAD University." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+  { "imports": {
+      "three": "./lib/three/build/three.module.js",
+      "three/addons/": "./lib/three/addons/"
+  } }
+  </script>
+</head>
+<body data-root="./" data-page="home">
+  <div data-include="nav"></div>
+
+  <section class="hero-home">
+    <div id="bracelet-stage" aria-hidden="true"></div>
+    <div class="hero-sticky">
+      <div class="wrap">
+        <p class="eyebrow">Industrial Design · OCAD University</p>
+        <h1 class="positioning">Making everyday products work harder, so people don't have to.</h1>
+      </div>
+      <div class="scroll-cue">Scroll ↓</div>
+    </div>
+  </section>
+
+  <section data-reveal>
+    <div class="wrap">
+      <div class="tag-row" style="margin-bottom:1.5rem;">
+        <span class="eyebrow">Featured work</span>
+      </div>
+      <a class="card card-hero" href="work/ostricheyes.html">
+        <div class="thumb"><img src="assets/projects/ostricheyes/render-thumb.png" alt="OstrichEyes" loading="lazy" style="object-position:57% 29%;" /></div>
+        <div class="card-body">
+          <span class="eyebrow">Hero project</span>
+          <h2>OstrichEyes</h2>
+          <p class="outcome">A concealment headset, onboarding app, and animated HUD overlay for a fully task-based future.</p>
+          <div class="tag-row">
+            <span class="tag status-concept">Concept</span>
+            <span class="tag">Speculative design</span>
+            <span class="tag">UI/motion design</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="grid-work">
+
+        <a class="card" href="work/chinatown-bike-ring.html">
+          <div class="thumb"><img src="assets/projects/chinatown/on-site-2.jpg" alt="Chinatown Bike Ring" loading="lazy" /></div>
+          <div class="card-body">
+            <h2>Chinatown Bike Ring</h2>
+            <p class="outcome">A site-specific bike ring cut into weathering steel, tested in place on a real Chinatown street.</p>
+            <div class="tag-row">
+              <span class="tag status-prototype">Prototype</span>
+              <span class="tag">Metal fabrication</span>
+              <span class="tag">Orthographic CAD</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="work/shellsafe-pill-container.html">
+          <div class="thumb"><img src="assets/projects/shellsafe/product-thumb.png" alt="ShellSafe Pill Container" loading="lazy" style="object-position:30% 55%;" /></div>
+          <div class="card-body">
+            <h2>ShellSafe Pill Container</h2>
+            <p class="outcome">A discreet, touch-activated pill container that removes the stigma from a daily medication routine.</p>
+            <div class="tag-row">
+              <span class="tag status-prototype">Prototype</span>
+              <span class="tag">HCD interviews</span>
+              <span class="tag">Fabrication</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="work/go-transit-tracker.html">
+          <div class="thumb"><img src="assets/projects/gotransit/hero-photo.jpg" alt="GO Transit Tracker" loading="lazy" /></div>
+          <div class="card-body">
+            <h2>GO Transit Tracker</h2>
+            <p class="outcome">A hand-painted GO Transit locomotive with a live OLED countdown pulled from real transit data.</p>
+            <div class="tag-row">
+              <span class="tag status-prototype">Prototype</span>
+              <span class="tag">Arduino</span>
+              <span class="tag">Live API integration</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="work/osf-display-storage-cart.html">
+          <div class="thumb"><img src="assets/projects/osfcart/scale-model-1.jpg" alt="OSF Display &amp; Storage Cart" loading="lazy" style="object-position:center 22%;" /></div>
+          <div class="card-body">
+            <h2>OSF Display &amp; Storage Cart</h2>
+            <p class="outcome">A wheeled, lockable display cart co-designed with the skateboarding students who'd push it around.</p>
+            <div class="tag-row">
+              <span class="tag status-prototype">Prototype</span>
+              <span class="tag">Participatory co-design</span>
+              <span class="tag">Design for manufacturability</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="work/the-dugout.html">
+          <div class="thumb"><img src="assets/projects/dugout/garden-concept-visualization.png" alt="The Dugout: Bluejays Garden" loading="lazy" style="object-position:50% 30%;" /></div>
+          <div class="card-body">
+            <h2>The Dugout: Bluejays Garden</h2>
+            <p class="outcome">A pitched conservation garden and community hub for Toronto's Quayside waterfront.</p>
+            <div class="tag-row">
+              <span class="tag status-concept">Concept</span>
+              <span class="tag">Service blueprinting</span>
+              <span class="tag">Resident interviews</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="work/scruffy.html">
+          <div class="thumb"><img src="assets/projects/scruffy/prototype-reference.jpg" alt="SCRUFFY" loading="lazy" /></div>
+          <div class="card-body">
+            <h2>SCRUFFY</h2>
+            <p class="outcome">A sponge-and-brush hybrid that re-sharpens a worn sponge mid-scrub.</p>
+            <div class="tag-row">
+              <span class="tag status-concept">Concept</span>
+              <span class="tag">SCAMPER ideation</span>
+              <span class="tag">Human-factors testing</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+      <p style="margin-top:1.5rem;"><a class="btn" href="work/index.html">View all work →</a></p>
+    </div>
+  </section>
+
+  <section data-reveal style="padding-top:0;">
+    <div class="wrap about-teaser">
+      <div class="about-teaser-photo"><img src="assets/about/about-photo.jpg" alt="Avikhai Elijah" loading="lazy" /></div>
+      <div class="about-teaser-text">
+        <span class="eyebrow">About</span>
+        <p style="font-size:1.15rem;">I look for the barriers people have quietly adapted to instead of questioning: the problems so familiar they've stopped registering as problems at all. That means research and empathy work aren't a formality before the "real" design starts; they're where a solution shaped by one person's specific constraint actually comes from.</p>
+        <a class="text-link" href="about.html">More about my approach →</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+
+  <script src="lib/gsap/gsap.min.js"></script>
+  <script src="lib/gsap/ScrollTrigger.min.js"></script>
+  <script src="js/include.js"></script>
+  <script type="module" src="js/homepage.js"></script>
+</body>
+</html>

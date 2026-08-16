@@ -1,0 +1,682 @@
+/* ===== Design tokens ===== */
+:root {
+  --bg: #f2f0ec;
+  --bg-raised: #eeece6;
+  --text: #2a2622;
+  --text-muted: #6b655c;
+  --accent: #7a2e2e;
+  --accent-soft: #7a2e2e1a;
+  --border: #ddd8cf;
+  --shadow-light: #ffffffcc;
+  --shadow-dark: #c9c3b666;
+  --on-accent: #f2ece4; /* text sitting on an accent-colored fill (buttons, hover overlays) */
+  --status-concept: #6b5b95;
+  --status-market: #2f6b4f;
+  --lightbox-bg: #17140f;
+  --lightbox-text: #e8e2d8;
+  --lightbox-text-muted: #b8b0a2;
+  --radius: 14px;
+  --font-display: "Bodoni Moda", "Times New Roman", serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --maxw: 1200px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { max-width: 100%; display: block; }
+
+a { color: inherit; text-decoration: none; }
+a.text-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+a.text-link:hover { opacity: 0.75; }
+
+/* Shared keyboard-focus ring for every link/button site-wide, so focus visibility isn't just
+   the browser default on some elements and a custom ring on others (previously only the shelf
+   card had one). .card overrides the offset below since it clips an outward ring via its own
+   overflow:hidden; .lb-btn/.lb-close override the color since they sit on the dark lightbox
+   overlay, where --accent drops to ~2:1 contrast (fails the 3:1 non-text minimum). */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0 0 0.5em;
+  line-height: 1.15;
+}
+
+h1 { font-size: clamp(2.4rem, 5vw, 4.2rem); }
+h2 { font-size: clamp(1.8rem, 3.2vw, 2.6rem); }
+h3 { font-size: clamp(1.3rem, 2.2vw, 1.7rem); }
+
+p { margin: 0 0 1em; }
+.eyebrow {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 6vw, 5rem);
+}
+
+section { padding: clamp(3rem, 8vw, 6rem) 0; }
+
+/* ===== Neumorphic depth ===== */
+.neu {
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+  box-shadow: -8px -8px 16px var(--shadow-light), 8px 8px 20px var(--shadow-dark);
+}
+.neu-inset {
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: inset -4px -4px 10px var(--shadow-light), inset 4px 4px 12px var(--shadow-dark);
+}
+
+/* ===== Nav ===== */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.site-nav .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.1rem;
+  padding-bottom: 1.1rem;
+}
+.site-nav .logo {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.site-nav .links { display: flex; gap: clamp(1rem, 3vw, 2.25rem); align-items: center; }
+/* Padding on the link itself, not just surrounding whitespace — the hit area needs to actually
+   be ~44px tall, not just look that way inside a padded nav bar. */
+.site-nav .links a { display: inline-flex; align-items: center; padding: 0.7em 0.1em; margin: -0.7em -0.1em; font-size: 0.92rem; font-weight: 500; }
+.site-nav .links a:hover { color: var(--accent); }
+.site-nav .links a.current { color: var(--accent); }
+
+/* ===== Buttons & tags ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.75em 1.4em;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  background: var(--bg-raised);
+  box-shadow: -5px -5px 10px var(--shadow-light), 5px 5px 14px var(--shadow-dark);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  border: none;
+  color: var(--text);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn.btn-accent { background: var(--accent); color: var(--on-accent); box-shadow: 0 6px 18px var(--accent-soft); }
+
+.tag {
+  display: inline-block;
+  padding: 0.35em 0.9em;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  /* Flat fill must match the actual page background (body's --bg), not --bg-raised — the two
+     are subtly different off-whites, and a mismatched fill under the neumorphic shadow was
+     part of what read as a seam/halo around every pill. The other part: at this pill's small
+     size (~26-31px tall), the original -3px/7px + 3px/9px blur — sized for larger neumorphic
+     surfaces like .neu cards and .btn — is oversized relative to the element and visibly bleeds
+     past its own rounded edge instead of reading as a subtle depth cue. Scaled down here so the
+     shadow stays proportional to a pill this small.
+  */
+  background: var(--bg);
+  box-shadow: -1.5px -1.5px 3px var(--shadow-light), 1.5px 1.5px 4px var(--shadow-dark);
+  color: var(--text-muted);
+}
+.tag.status-concept { color: var(--status-concept); }
+.tag.status-prototype { color: var(--accent); }
+.tag.status-market { color: var(--status-market); }
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* ===== Grids ===== */
+.grid-work {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+@media (max-width: 900px) { .grid-work { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .grid-work { grid-template-columns: 1fr; } }
+
+/* Hero project card (OstrichEyes) — full-width, image + copy side by side, more visual weight
+   than the standard grid cards below it. */
+.card-hero {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+.card.card-hero .thumb { aspect-ratio: 16/10; }
+/* .card.card-hero (2 classes) so this reliably beats the later, equal-specificity .card h2
+   rule below — the old h3 version of .card h2 had no font-size, so this collision never
+   existed before the h3->h2 heading-level bump. */
+.card.card-hero h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+@media (max-width: 720px) { .card-hero { grid-template-columns: 1fr; } }
+
+.card {
+  display: block;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+.card:hover { transform: translateY(-4px); }
+/* Inset instead of the shared outward ring — .card's own overflow:hidden (above) clips an
+   outline drawn outside its border box. */
+.card:focus-visible { outline-offset: -3px; }
+.card .thumb {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+.card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.card .card-body { padding: 1rem 0.25rem 0; }
+/* Semantic level bumped from h3 to h2 (cards sit directly under the page h1, nothing skipped) —
+   font-size pinned explicitly so it keeps reading as a card title, not a generic h2. */
+.card h2 { font-size: clamp(1.3rem, 2.2vw, 1.7rem); margin-bottom: 0.3em; }
+.card .outcome { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.6em; }
+
+/* ===== Shelf (horizontal scroll strip) ===== */
+.shelf-wrap { position: relative; }
+.shelf-scroll {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.25rem 1.5rem;
+  scroll-snap-type: x proximity;
+  /* Arrow buttons replace the scrollbar as the primary nav affordance — hide the native
+     bar rather than showing both (Firefox/older Edge use scrollbar-width/-ms-overflow-style,
+     WebKit/Blink need the pseudo-element rule below). Scrolling by drag/trackpad/keyboard
+     still works identically; only the visible bar is gone. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.shelf-scroll::-webkit-scrollbar { display: none; }
+/* Reusing the lightbox's own .lb-btn circular-arrow language (48px, translucent disc,
+   hover-scale) so shelf navigation reads as the same control, just relocated — but hidden
+   by default and only revealed on hover/focus, since "appearing" arrows were requested
+   specifically instead of an always-visible control competing with the cards. */
+.shelf-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  color: var(--text);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  z-index: 2;
+}
+.shelf-arrow-prev { left: -6px; }
+.shelf-arrow-next { right: -6px; }
+.shelf-wrap:hover .shelf-arrow,
+.shelf-arrow:focus-visible { opacity: 1; }
+.shelf-arrow:hover { transform: translateY(-50%) scale(1.08); }
+.shelf-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* At either scroll edge the relevant arrow is inert (JS sets `disabled`) — fully hide it
+   rather than leaving a clickable dead-end button visible on hover. */
+.shelf-arrow:disabled { opacity: 0 !important; pointer-events: none; }
+/* Touch has no hover state to reveal the arrows with, so keep them visibly (if softly)
+   present rather than undiscoverable on phones/tablets. */
+@media (hover: none) {
+  .shelf-arrow { opacity: 0.9; }
+}
+@media (max-width: 640px) {
+  .shelf-arrow { width: 36px; height: 36px; font-size: 1.1rem; }
+  .shelf-arrow-prev { left: 2px; }
+  .shelf-arrow-next { right: 2px; }
+}
+.shelf-card {
+  scroll-snap-align: start;
+  flex: 0 0 190px;
+  padding: 0.75rem;
+  border-top: 3px solid var(--accent-shelf, var(--accent));
+  transition: transform 0.15s ease;
+}
+.shelf-card:hover { transform: translateY(-3px); }
+.shelf-card .thumb { aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; margin-bottom: 0.6rem; background: var(--bg); }
+.shelf-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+/* For deck/slide-sourced cover images: cropping a wide 16:9 slide into a square thumb via
+   object-fit:cover cuts off edge content (e.g. title text spanning the full slide width).
+   object-fit:contain letterboxes instead, so nothing gets cropped out. */
+.thumb-contain img { object-fit: contain !important; }
+/* Bumped from h4 to h3 — nests correctly under the "Also worth a look" h2 with nothing skipped. */
+.shelf-card h3 { font-family: var(--font-body); font-size: 0.88rem; font-weight: 700; margin-bottom: 0.2em; }
+.shelf-card p { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5em; line-height: 1.45; }
+/* .shelf-card.neu's own surface is --bg-raised, not the page's --bg — a tag here needs the
+   opposite fill from the base .tag rule to stay seamless against ITS actual background. */
+.shelf-card .tag { font-size: 0.65rem; background: var(--bg-raised); }
+/* "View full deck" links: light text link, not a button, for shelf items/projects with a real source deck. */
+.deck-link { font-size: 0.68rem; color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; }
+.deck-link:hover { color: var(--accent); }
+.shelf-card .deck-link { display: block; margin-top: 0.35em; }
+
+.shelf-card.is-interactive { cursor: pointer; }
+.shelf-card.is-interactive:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.shelf-card .thumb { position: relative; }
+.shelf-card.is-interactive .thumb::after {
+  content: "⤢ View";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent) 78%, transparent);
+  color: var(--on-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.shelf-card.is-interactive:hover .thumb::after,
+.shelf-card.is-interactive:focus-visible .thumb::after { opacity: 1; }
+.shelf-card .count-badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 0.4em;
+}
+
+/* ===== Lightbox ===== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--lightbox-bg) 92%, transparent);
+  backdrop-filter: blur(4px);
+  padding: clamp(1rem, 4vw, 3rem);
+}
+.lightbox.open { display: flex; }
+.lightbox-inner {
+  position: relative;
+  max-width: min(1000px, 100%);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.lightbox-stage {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-stage img,
+.lightbox-stage video {
+  max-width: 100%;
+  max-height: 72vh;
+  width: auto;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  background: var(--bg);
+}
+.lightbox-caption {
+  color: var(--lightbox-text);
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 60ch;
+  min-height: 1.2em;
+}
+.lightbox-caption .lb-title { font-weight: 700; }
+.lightbox-counter { color: var(--lightbox-text-muted); font-size: 0.78rem; letter-spacing: 0.05em; }
+.lb-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  color: var(--text);
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease;
+}
+.lb-btn:hover { transform: translateY(-50%) scale(1.08); }
+/* --accent (the shared ring color) drops to ~2:1 against the lightbox's dark overlay, well
+   under the 3:1 non-text contrast minimum — use the overlay's own light text color instead. */
+.lb-btn:focus-visible, .lb-close:focus-visible { outline-color: var(--lightbox-text); }
+.lb-prev { left: -8px; }
+.lb-next { right: -8px; }
+.lb-close {
+  position: absolute;
+  top: -14px;
+  right: -6px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.lb-close:hover { color: var(--accent); }
+@media (max-width: 640px) {
+  .lb-prev { left: 2px; }
+  .lb-next { right: 2px; }
+  .lb-btn { width: 40px; height: 40px; font-size: 1.2rem; }
+}
+
+/* Individually color-coded top borders, Charmin-style card-strip reference */
+.shelf-card.accent-1 { --accent-shelf: #3f6b8f; }
+.shelf-card.accent-2 { --accent-shelf: #4f7a5c; }
+.shelf-card.accent-3 { --accent-shelf: #b0793f; }
+.shelf-card.accent-4 { --accent-shelf: #8f5a3f; }
+.shelf-card.accent-5 { --accent-shelf: #a34a5c; }
+.shelf-card.accent-6 { --accent-shelf: #6b5a94; }
+.shelf-card.accent-7 { --accent-shelf: #3f8f80; }
+.shelf-card.accent-8 { --accent-shelf: #5a6b7a; }
+.shelf-card.accent-9 { --accent-shelf: #4a7a4f; }
+
+/* ===== Placeholder / pending markers ===== */
+.pending {
+  display: block;
+  margin: 0.75rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1.5px dashed var(--accent);
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-style: italic;
+}
+.pending::before { content: "⚠ "; }
+
+.viewer-placeholder {
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: var(--radius);
+  border: 1.5px dashed var(--border);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 2rem;
+  background: repeating-linear-gradient(135deg, var(--bg-raised), var(--bg-raised) 10px, var(--bg) 10px, var(--bg) 20px);
+}
+
+/* ===== 3D viewer ===== */
+.viewer-3d {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-raised);
+  cursor: grab;
+}
+.viewer-3d:active { cursor: grabbing; }
+.viewer-3d canvas { display: block; width: 100%; height: 100%; }
+.viewer-3d .viewer-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  padding: 0.35em 0.9em;
+  border-radius: 999px;
+  pointer-events: none;
+}
+.viewer-3d .viewer-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ===== Project page ===== */
+.project-header .meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.25rem 0;
+}
+.meta-strip .meta-item {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  padding: 0.4em 0.85em;
+  border-radius: 8px;
+  background: var(--bg-raised);
+}
+.hook { font-size: 1.2rem; color: var(--text-muted); max-width: 52ch; }
+
+.hero-visual { margin: 2rem 0 3rem; border-radius: var(--radius); overflow: hidden; }
+.hero-visual img, .hero-visual video { width: 100%; }
+/* 3D viewers read as too dominant at full hero width — scale down and center so there's
+   breathing room on both sides, consistent across every project page rather than per-page. */
+.hero-visual .viewer-3d { max-width: 82%; margin: 0 auto; }
+
+.section-block { max-width: 68ch; }
+.section-block.wide { max-width: none; }
+
+.process-item {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+.process-item img { border-radius: var(--radius); }
+.process-item:nth-child(even) { grid-template-columns: 1fr 1.1fr; }
+.process-item:nth-child(even) .process-media { order: 2; }
+@media (max-width: 720px) {
+  .process-item, .process-item:nth-child(even) { grid-template-columns: 1fr; }
+  .process-item:nth-child(even) .process-media { order: 0; }
+}
+
+.solution-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.solution-gallery img { border-radius: var(--radius); width: 100%; }
+.solution-gallery img.media-sm { max-width: 55%; margin: 0 auto; display: block; }
+/* Opt-in modifier for galleries whose source photos have mismatched aspect ratios
+   (e.g. one portrait product shot next to landscape workshop photos) — crops every
+   tile to a shared square so the row reads as one clean grid instead of uneven
+   heights. Scoped to specific galleries via this class rather than applied to
+   .solution-gallery generally, since most galleries only have 1-2 images (or a
+   single full-width hero shot) that shouldn't be force-cropped. */
+.solution-gallery.uniform img { aspect-ratio: 1 / 1; object-fit: cover; }
+
+/* ===== Interactive app demo (live prototype embedded in a phone frame) ===== */
+.phone-demo { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; margin: 1.5rem 0; }
+.phone-frame {
+  width: min(100%, 380px);
+  aspect-ratio: 9 / 19.5;
+  background: #1a1816;
+  border-radius: 2.4rem;
+  padding: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+.phone-frame .phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.6rem;
+  overflow: hidden;
+  background: #fff;
+}
+.phone-frame .phone-screen::before {
+  /* Speaker/notch cutout, purely decorative. */
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 18px;
+  background: #1a1816;
+  border-radius: 999px;
+  z-index: 2;
+}
+.phone-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.phone-demo .deck-link { font-size: 0.82rem; }
+
+.process-media.media-sm img { max-width: 60%; margin: 0 auto; display: block; }
+
+.project-footer-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ===== Footer ===== */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: clamp(2.5rem, 6vw, 4rem) 0 2.5rem;
+}
+.site-footer .footer-grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+/* Not a real heading — a caption for a small link list, and the footer follows a different
+   heading depth on every page it's included on. A true h-level here would skip levels on
+   some pages no matter which one was picked. */
+.site-footer .footer-heading { font-family: var(--font-body); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.75em; }
+.site-footer .footer-links { display: flex; flex-direction: column; gap: 0.5em; }
+.site-footer .copyright { margin-top: 2.5rem; font-size: 0.8rem; color: var(--text-muted); }
+
+/* ===== Homepage hero ===== */
+.hero-home {
+  position: relative;
+  height: 220vh; /* scroll runway for the bracelet roll-down animation */
+  /* Override the generic `section` top/bottom padding — hero-sticky handles its own
+     vertical centering below and that padding was stacking on top of the nav's own
+     height, pushing the centered text well below true viewport-center on load. */
+  padding: 0;
+}
+.hero-sticky {
+  position: sticky;
+  top: 0;
+  /* The sticky nav sits in normal flow above this section (it isn't fixed), so centering
+     against a full 100vh box pushes content below true center by half the nav's height.
+     Subtracting it here centers the text + bracelet within the space actually visible
+     below the nav on load. */
+  height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero-home .name {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.02em;
+}
+.hero-home .positioning {
+  max-width: 16ch;
+}
+#bracelet-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+#bracelet-stage canvas { width: 100%; height: 100%; }
+/* .hero-sticky is a flex column (for vertical centering); a flex item with `margin: auto`
+   (inherited from the shared .wrap rule) gets sized to its own content instead of stretching
+   to the container width, so it was centering a narrower content-width box than every other
+   .wrap on the site, landing well right of the nav logo. width:100% forces the same 1200px-
+   max-width box everyone else gets, so it centers/left-aligns identically to the nav. */
+.hero-home .wrap { position: relative; z-index: 2; width: 100%; }
+.scroll-cue {
+  position: absolute;
+  bottom: 2.5rem;
+  left: clamp(1.25rem, 4vw, 3rem);
+  z-index: 2;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.about-teaser { display: flex; gap: clamp(2rem, 5vw, 4rem); align-items: center; flex-wrap: wrap; }
+.about-teaser .about-teaser-text { flex: 1 1 360px; }
+.about-teaser .about-teaser-photo { flex: 0 0 220px; border-radius: var(--radius); overflow: hidden; }
+
+/* ===== About page ===== */
+.about-hero { display: flex; gap: clamp(2rem, 5vw, 4rem); align-items: flex-start; flex-wrap: wrap; }
+.about-hero .about-photo { flex: 0 0 320px; border-radius: var(--radius); overflow: hidden; }
+.about-hero .about-copy { flex: 1 1 420px; max-width: 62ch; }
+
+/* ===== Resume ===== */
+.resume-summary { max-width: 62ch; }
+
+/* ===== Utility ===== */
+.mt-lg { margin-top: clamp(2rem, 5vw, 3.5rem); }
+.center { text-align: center; }

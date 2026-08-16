@@ -1,0 +1,14 @@
+# Internal build tooling — not part of the deployed site
+.claude/
+
+# Internal planning/handoff docs — not linked from any page
+claude-code-handoff-brief.md
+portfolio-shortlist.md
+portfolio-site-template.md
+
+# Stray duplicate file (real copy lives in assets/projects/dugout/)
+A4 - Phase 2 Concept Development and Experience Design - Will, Lisa, Fernanda, Jordan, Avikhai.pdf
+
+# OS cruft
+.DS_Store
+Thumbs.db
