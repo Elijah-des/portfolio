@@ -1,0 +1,11 @@
+{
+  // Tells Cloudflare's Wrangler CLI this Worker is pure static asset hosting —
+  // no server-side code, just serve the repo root as-is (index.html, css/, js/,
+  // lib/, work/, assets/, partials/, about.html, resume.html). No "main" entry
+  // point needed since there's no custom Worker script, just assets.
+  "name": "portfolio",
+  "compatibility_date": "2026-08-15",
+  "assets": {
+    "directory": "./"
+  }
+}
