@@ -1,0 +1,11 @@
+# Tells Wrangler which files in the assets directory (repo root, per wrangler.jsonc)
+# NOT to upload as static assets. Same syntax as .gitignore.
+# Without this, Wrangler tries to serve the .git folder itself as a static asset,
+# including its ~200MB history pack file — way over the 25MiB per-asset limit.
+.git/
+.gitignore
+.assetsignore
+wrangler.jsonc
+node_modules/
+.DS_Store
+Thumbs.db
