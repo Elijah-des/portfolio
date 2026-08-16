@@ -654,6 +654,19 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
    .wrap on the site, landing well right of the nav logo. width:100% forces the same 1200px-
    max-width box everyone else gets, so it centers/left-aligns identically to the nav. */
 .hero-home .wrap { position: relative; z-index: 2; width: 100%; }
+/* That z-index:2 above only wins *inside* .hero-sticky's own stacking context — position:sticky
+   unconditionally creates one (per spec, same as fixed), so .wrap's z-index never actually gets
+   compared against #bracelet-stage's z-index:1, which sits one level up as .hero-sticky's own
+   sibling. In practice the bracelet still paints on top of the text. On desktop this is
+   invisible because the bracelet sits far enough right (see computeBaseX in homepage.js) to
+   clear the left-aligned text entirely, but on mobile the bracelet sits much closer to center
+   and visibly overlaps it. Giving .hero-sticky its own explicit z-index (matched to or above
+   the bracelet's) fixes the actual paint order at the level where it's really being decided —
+   scoped to mobile only, since desktop's layout never exposes the bug and this isn't the place
+   to change desktop's look.  */
+@media (max-width: 720px) {
+  .hero-sticky { position: sticky; z-index: 2; }
+}
 .scroll-cue {
   position: absolute;
   bottom: 2.5rem;
@@ -668,6 +681,20 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
 .about-teaser { display: flex; gap: clamp(2rem, 5vw, 4rem); align-items: center; flex-wrap: wrap; }
 .about-teaser .about-teaser-text { flex: 1 1 360px; }
 .about-teaser .about-teaser-photo { flex: 0 0 220px; border-radius: var(--radius); overflow: hidden; }
+
+/* A dedicated closing CTA, distinct from the footer's small contact line — the footer stays
+   as reference info on every page, this is the one deliberate "get in touch" moment. */
+.contact-cta { padding-top: 0; }
+.contact-cta-inner {
+  text-align: center;
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 3rem);
+  box-shadow: -8px -8px 16px var(--shadow-light), 8px 8px 20px var(--shadow-dark);
+}
+.contact-cta-inner h2 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); margin: 0.3em 0 0.5em; }
+.contact-cta-actions { display: flex; gap: 1.5rem; align-items: center; justify-content: center; flex-wrap: wrap; }
+.contact-cta-actions .btn-accent { font-size: 1.02rem; padding: 0.85em 1.8em; }
 
 /* ===== About page ===== */
 .about-hero { display: flex; gap: clamp(2rem, 5vw, 4rem); align-items: flex-start; flex-wrap: wrap; }

@@ -42,14 +42,16 @@ const MODEL_ORIENTATION = [
   // a Z-up CAD export. -90° on X maps that axis onto Y (verified: post-rotation size is
   // 1.1 × 1.99 × 0.6, i.e. tall/upright), the same fix gotrain needed for the same reason.
   { match: "osfcart", rotation: [-D90, 0, 0] },
-  // Iteration 6's Y-only spin (matched via left/right area-ratio heuristic) still wasn't right —
-  // that heuristic couldn't see vertical positioning, just left/right mass balance. Iteration 7
-  // added a real reference screenshot showing the target angle, so this was matched by rendering
-  // the model at a grid of Y/X rotations from the viewer's actual default camera, downsampling
-  // each to a coarse luminance grid, and picking the one with the highest normalized cross-
-  // correlation against the same downsample of the reference image — a slight forward tilt (X)
-  // combined with a small Y spin, not a pure Y spin.
-  { match: "ostricheyes", rotation: [(-13 * Math.PI) / 180, (183 * Math.PI) / 180, 0] },
+  // Two earlier attempts (iteration 6's area-ratio heuristic, iteration 7's luminance-grid
+  // cross-correlation) both landed on the wrong angle — this mesh's two earcups are close
+  // enough to symmetric in silhouette that blind pixel-similarity metrics can't reliably tell
+  // "left cup bigger/closer" from "right cup bigger/closer." Re-matched by rendering a real
+  // grid of candidate angles with the site's actual clay material/lighting and comparing them
+  // directly against the project's own reference renders (headset-render.png,
+  // shaded-preview-1.png) by eye — X-13/Y90 is the one that actually reproduces their
+  // composition: headband arcing left-to-right over the top, left earcup bigger/closer in the
+  // foreground, right earcup smaller and receding toward the back.
+  { match: "ostricheyes", rotation: [(-13 * Math.PI) / 180, (90 * Math.PI) / 180, 0] },
 ];
 
 // Per-model material tweaks. GO Transit's long, part-cylindrical body and flat base panel catch
