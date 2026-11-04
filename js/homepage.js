@@ -52,16 +52,103 @@ if (stageEl) {
   loader.setDRACOLoader(dracoLoader);
 
   let bracelet;
+  let model; // the loaded glb, inside the `bracelet` pivot group
+  let modelCenter = new THREE.Vector3(); // its bounding-box center in its own file coordinates
   let frameId;
-  let baseX = 1.3; // rest position: right side of the hero, clear of the left-aligned headline
-  const BASE_Y = -0.14; // vertically aligned with the headline block instead of floating near the top
+  let unitScale = 1; // 1 / the model's largest dimension, so "scale" below reads in world units
+  let aspectRatio = 0.5; // the tilted bracelet's on-screen height / width, measured at load
 
-  function computeBaseX() {
-    // Match the headline's own CSS breakpoint (720px), not aspect ratio. A squarish-but-wide
-    // window (e.g. 886x944, aspect 0.94) used to fail the old aspect > 1.1 check and fall into
-    // the "narrow" branch even though the headline is still in its full desktop layout at that
-    // width, putting the bracelet right back on top of the text it was supposed to clear.
-    return window.innerWidth > 720 ? 0.75 : 0.15;
+  // Rest pose. Desktop values are the long-standing hand-tuned ones; mobile is measured.
+  let baseX = 0.75;
+  let baseY = -0.14;
+  let baseScale = 1.15;
+  let driftX = 0.4;
+
+  // Match the headline's own CSS breakpoint (720px), not aspect ratio. A squarish-but-wide
+  // window (e.g. 886x944, aspect 0.94) still has the full desktop headline layout.
+  const isMobile = () => window.innerWidth <= 720;
+
+  // Size of the camera's view at the bracelet's depth (z = 0), in world units.
+  function viewSize() {
+    const h = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    return { w: h * camera.aspect, h };
+  }
+
+  let baseZ = 0;
+  function layoutBracelet() {
+    if (!isMobile()) {
+      // Desktop reproduces the original transform exactly: the file's own origin as the pivot,
+      // pushed back by the bounding-box center's z. The headline alignment was hand-tuned
+      // against this over several rounds, so it must not shift.
+      model.position.set(0, 0, 0);
+      baseX = 0.75;
+      baseY = -0.14;
+      baseZ = -modelCenter.z;
+      baseScale = 1.15;
+      driftX = 0.4;
+    } else {
+      // Mobile pivots around the bracelet's true center, so the measured gap is filled exactly.
+      model.position.copy(modelCenter).negate();
+      baseZ = 0;
+      // On a phone the camera's horizontal view is narrow, so the desktop size ends up wider
+      // than the screen, and the desktop spot sits right on the headline. Instead, measure the
+      // gap between the end of the headline and the "Scroll" cue and fit the bracelet into it.
+      // Positions are taken "at rest" (page scrolled to top): .hero-sticky is sticky, so its
+      // live position shifts while the nav scrolls away. Offsets inside it don't, though.
+      const hero = document.querySelector(".hero-home");
+      const sticky = document.querySelector(".hero-sticky");
+      const heading = document.querySelector(".hero-home .positioning");
+      const cue = document.querySelector(".hero-home .scroll-cue");
+      const stickyRect = sticky.getBoundingClientRect();
+      const stickyTopAtRest = hero.getBoundingClientRect().top + window.scrollY;
+      const gapTop = stickyTopAtRest + (heading.getBoundingClientRect().bottom - stickyRect.top) + 24;
+      const gapBottom = cue
+        ? stickyTopAtRest + (cue.getBoundingClientRect().top - stickyRect.top) - 24
+        : window.innerHeight - 24;
+
+      const { w, h } = viewSize();
+      const worldPerPx = h / window.innerHeight;
+      const gapH = Math.max(gapBottom - gapTop, 60) * worldPerPx;
+      // Widest that fits both 78% of the screen width and the measured gap's height.
+      baseScale = Math.min(w * 0.78, gapH / aspectRatio);
+      baseX = 0;
+      baseY = (0.5 - (gapTop + gapBottom) / 2 / window.innerHeight) * h;
+      driftX = 0; // the desktop drift would push it off the edge of a narrow screen
+    }
+    bracelet.scale.setScalar(baseScale * unitScale);
+    applyScroll(lastProgress);
+  }
+
+  // The sticky nav's real height (it wraps to two lines on phones), exposed as --nav-h so the
+  // mobile hero can pin its headline just below the nav instead of sliding underneath it.
+  function syncNavHeight() {
+    const nav = document.querySelector(".site-nav");
+    if (nav) document.documentElement.style.setProperty("--nav-h", nav.offsetHeight + "px");
+  }
+  syncNavHeight();
+  document.addEventListener("partials:loaded", () => {
+    syncNavHeight();
+    if (bracelet) layoutBracelet(); // hero position depends on the nav, re-measure once it exists
+  });
+
+  // Scroll-driven pose. Kept separate so a resize (e.g. a phone's URL bar collapsing
+  // mid-scroll) re-applies the current progress instead of snapping back to the rest pose.
+  const cueEl = document.querySelector(".hero-home .scroll-cue");
+  let lastProgress = 0;
+  function applyScroll(p) {
+    lastProgress = p;
+    // On phones the bracelet rolls down through the "Scroll" cue, so fade the cue out as soon
+    // as scrolling starts; by then it has done its job.
+    if (cueEl) cueEl.style.opacity = isMobile() ? String(Math.max(0, 1 - p * 8)) : "";
+    if (!prefersReducedMotion) {
+      bracelet.rotation.y = p * Math.PI * 5;
+      bracelet.rotation.z = p * Math.PI * 0.6;
+    }
+    bracelet.position.y = baseY - p * 1.7; // rolls down the page as you scroll (halved travel distance per site owner request)
+    bracelet.position.x = baseX - p * driftX; // drifts gently toward center on the way down (desktop only)
+    bracelet.position.z = baseZ;
+    const fadeStart = 0.55;
+    stageEl.style.opacity = p < fadeStart ? 1 : Math.max(0, 1 - (p - fadeStart) / (1 - fadeStart));
   }
 
   function animate() {
@@ -72,8 +159,8 @@ if (stageEl) {
   loader.load(
     "assets/homepage/bracelet-compressed.glb",
     (gltf) => {
-      bracelet = gltf.scene;
-      bracelet.traverse((node) => {
+      model = gltf.scene;
+      model.traverse((node) => {
         if (node.isMesh) {
           if (node.geometry && !node.geometry.attributes.normal) node.geometry.computeVertexNormals();
           // Materials come straight from the glb's own baked textures — real gold/blue-gem
@@ -82,19 +169,25 @@ if (stageEl) {
         }
       });
 
-      const box = new THREE.Box3().setFromObject(bracelet);
+      // Wrap the model in a pivot group; layoutBracelet() decides whether it pivots around the
+      // file's origin (desktop, unchanged) or the bracelet's true center (mobile).
+      const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3());
-      const center = box.getCenter(new THREE.Vector3());
-      bracelet.position.sub(center);
-      const maxDim = Math.max(size.x, size.y, size.z) || 1;
-      const scale = 1.15 / maxDim; // smaller than before so it doesn't dominate / overlap text
-      bracelet.scale.setScalar(scale);
+      box.getCenter(modelCenter);
+      model.position.copy(modelCenter).negate(); // centered, for the measurement below
+      bracelet = new THREE.Group();
+      bracelet.add(model);
+      unitScale = 1 / (Math.max(size.x, size.y, size.z) || 1);
       bracelet.rotation.x = 0.35;
 
-      baseX = computeBaseX();
-      bracelet.position.x = baseX;
-      bracelet.position.y = BASE_Y;
+      // Measure how tall the tilted ring reads on screen relative to its width, for fitting it
+      // into the mobile gap. Done at unit scale before it's placed.
+      bracelet.scale.setScalar(unitScale);
+      bracelet.updateMatrixWorld(true);
+      const tilted = new THREE.Box3().setFromObject(bracelet, true).getSize(new THREE.Vector3());
+      aspectRatio = tilted.y / (tilted.x || 1);
 
+      layoutBracelet();
       scene.add(bracelet);
       animate();
 
@@ -103,19 +196,15 @@ if (stageEl) {
         start: "top top",
         end: "bottom top",
         scrub: 1.2,
-        onUpdate: (self) => {
-          const p = self.progress;
-          if (!prefersReducedMotion) {
-            bracelet.rotation.y = p * Math.PI * 5;
-            bracelet.rotation.z = p * Math.PI * 0.6;
-          }
-          bracelet.position.y = BASE_Y - p * 1.7;   // rolls down the page as you scroll (halved travel distance per site owner request)
-          bracelet.position.x = baseX - p * 0.4; // drifts gently toward center on the way down
-          const fadeStart = 0.55;
-          stageEl.style.opacity = p < fadeStart ? 1 : Math.max(0, 1 - (p - fadeStart) / (1 - fadeStart));
-        },
+        onUpdate: (self) => applyScroll(self.progress),
         onLeave: () => {
           if (frameId) cancelAnimationFrame(frameId);
+          frameId = undefined;
+        },
+        // Restart rendering when scrolling back up into the hero. Without this the render loop
+        // stayed stopped after onLeave, so the bracelet froze at its last scrolled-away frame.
+        onEnterBack: () => {
+          if (!frameId) animate();
         },
       });
     },
@@ -129,7 +218,8 @@ if (stageEl) {
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
-    baseX = computeBaseX();
+    syncNavHeight();
+    if (bracelet) layoutBracelet();
     if (bracelet && ScrollTrigger) ScrollTrigger.refresh();
   });
 }

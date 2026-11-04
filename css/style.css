@@ -665,7 +665,20 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
    scoped to mobile only, since desktop's layout never exposes the bug and this isn't the place
    to change desktop's look.  */
 @media (max-width: 720px) {
-  .hero-sticky { position: sticky; z-index: 2; }
+  .hero-sticky {
+    position: sticky;
+    z-index: 2;
+    /* On a phone, sit the headline near the top instead of dead center, leaving the lower
+       half of the screen as a clear gap that homepage.js measures and fits the bracelet into. */
+    justify-content: flex-start;
+    padding-top: clamp(1.5rem, 6vh, 3.5rem);
+    /* Pin just below the sticky nav (its measured height, set by homepage.js) rather than at
+       top:0, where the headline slid underneath the nav once scrolling started. */
+    top: var(--nav-h, 4rem);
+    /* 100vh on mobile browsers includes the area behind the URL bar, which pushed the
+       "Scroll" cue off-screen on load. svh is the height actually visible with the bar showing. */
+    height: calc(100svh - var(--nav-h, 4rem));
+  }
 }
 .scroll-cue {
   position: absolute;
