@@ -6,6 +6,8 @@
   "name": "portfolio",
   "compatibility_date": "2026-08-15",
   "assets": {
-    "directory": "./"
+    "directory": "./",
+    // Serve 404.html (with a real 404 status) for addresses that do not exist.
+    "not_found_handling": "404-page"
   }
 }

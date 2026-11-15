@@ -779,3 +779,49 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
   .about-teaser .text-link,
   .contact-cta .text-link { display: inline-block; padding-block: 0.6rem; }
 }
+
+
+/* ===== Case-study additions: role line, jump links, pull quotes, wide figure ===== */
+.meta-strip .meta-role { color: var(--text); }
+.meta-strip .meta-role strong { font-weight: 600; color: var(--accent); }
+
+/* Jump links are built by js/include.js from the page's own h2 headings. */
+.jump-links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.4rem; margin-top: 0.25rem; font-size: 0.85rem; }
+.jump-links a { color: var(--text-muted); text-decoration: none; padding-block: 0.35rem; border-bottom: 1px solid transparent; }
+.jump-links a:hover, .jump-links a:focus-visible { color: var(--accent); border-bottom-color: currentColor; }
+h2[id] { scroll-margin-top: 5.5rem; }
+@media (hover: none) { .jump-links a { padding-block: 0.7rem; } }
+
+.pull-quote {
+  margin: clamp(2rem, 5vw, 3.25rem) 0 0;
+  padding-left: clamp(1rem, 3vw, 1.75rem);
+  border-left: 3px solid var(--accent);
+  max-width: 40rem;
+}
+.pull-quote p {
+  font-family: var(--font-display, "Bodoni Moda", Georgia, serif);
+  font-style: italic;
+  font-size: clamp(1.45rem, 3.2vw, 2.1rem);
+  line-height: 1.25;
+  margin: 0 0 0.6rem;
+}
+.pull-quote cite { font-style: normal; font-size: 0.82rem; color: var(--text-muted); }
+
+.wide-figure { margin: clamp(2rem, 5vw, 3rem) 0 0; }
+.wide-figure img { width: 100%; border-radius: var(--radius); background: #fff; }
+.wide-figure figcaption { margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
+.process-media.media-sm img + img { margin-top: 1rem; }
+
+/* ===== Resume page content ===== */
+.resume-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+@media (max-width: 800px) { .resume-grid { grid-template-columns: 1fr; } }
+.resume-grid h2 { font-size: 1.35rem; margin: 2.2rem 0 1rem; }
+.resume-grid > div > h2:first-child { margin-top: 0; }
+.resume-entry { margin-bottom: 1.6rem; }
+.resume-entry h3 { font-size: 1.02rem; margin: 0 0 0.15rem; font-family: inherit; font-weight: 600; }
+.resume-entry .resume-when { font-size: 0.82rem; color: var(--text-muted); margin: 0 0 0.45rem; }
+.resume-entry p { margin: 0 0 0.45rem; }
+.resume-grid ul { margin: 0; padding-left: 1.1rem; }
+.resume-grid li { margin-bottom: 0.3rem; }
+.resume-side h3 { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-family: inherit; font-weight: 600; margin: 1.4rem 0 0.5rem; }
+.resume-side h2 + h3 { margin-top: 0; }
