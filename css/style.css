@@ -825,3 +825,11 @@ h2[id] { scroll-margin-top: 5.5rem; }
 .resume-grid li { margin-bottom: 0.3rem; }
 .resume-side h3 { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-family: inherit; font-weight: 600; margin: 1.4rem 0 0.5rem; }
 .resume-side h2 + h3 { margin-top: 0; }
+
+/* ShellSafe: photo pairs, app screens and a three-up photo row (clean photos instead of deck slides) */
+.process-media.media-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.app-screens { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(0.6rem, 2vw, 1.5rem); margin-top: 1.5rem; max-width: 60rem; }
+.app-screens img { width: 100%; height: auto; border-radius: 10px; }
+@media (max-width: 620px) { .app-screens { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.solution-gallery.photo-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 620px) { .solution-gallery.photo-row { grid-template-columns: 1fr; } }
