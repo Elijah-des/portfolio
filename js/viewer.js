@@ -70,6 +70,34 @@ function materialOverridesFor(url) {
   return hit ? hit.overrides : {};
 }
 
+// Camera distance at which a box of `size` (centered on the origin) fills `fill` of the frame.
+// The old rule (largest dimension x 1.6) ignored the frame's shape and the viewing angle, so
+// most models sat small with a lot of dead space around them, worst on the narrow mobile viewer.
+// Auto-rotate orbits the camera around the vertical axis, so every corner is checked across a
+// full turn at the camera's fixed elevation: the model is as large as it can be without
+// clipping the frame at any point in the spin.
+function fitDistance(size, camera, dir, fill = 0.84) {
+  const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+  const tanH = tanV * camera.aspect;
+  const elevation = Math.asin(dir.y);
+  const hx = size.x / 2, hy = size.y / 2, hz = size.z / 2;
+  const up = new THREE.Vector3(0, 1, 0);
+  const n = new THREE.Vector3(), right = new THREE.Vector3(), camUp = new THREE.Vector3(), c = new THREE.Vector3();
+  let dist = 0;
+  for (let step = 0; step < 36; step++) {
+    const az = (step / 36) * Math.PI * 2;
+    n.set(Math.cos(elevation) * Math.sin(az), Math.sin(elevation), Math.cos(elevation) * Math.cos(az)); // target -> camera
+    right.crossVectors(up, n).normalize();
+    camUp.crossVectors(n, right);
+    for (let i = 0; i < 8; i++) {
+      c.set(i & 1 ? hx : -hx, i & 2 ? hy : -hy, i & 4 ? hz : -hz);
+      const toward = c.dot(n); // how far this corner sits in front of the orbit center
+      dist = Math.max(dist, toward + Math.abs(c.dot(right)) / (fill * tanH), toward + Math.abs(c.dot(camUp)) / (fill * tanV));
+    }
+  }
+  return dist || 1;
+}
+
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 
@@ -118,7 +146,23 @@ function mountViewer(container) {
   fill.position.set(-5, 2, -3);
   scene.add(fill);
 
+  // Don't trap page scroll. Without this, a plain mouse wheel over the viewer zoomed the model
+  // instead of scrolling the page (the viewer fills most of the first screen, so scrolling down
+  // a project page stalled there). Registered before OrbitControls so it runs first: wheel
+  // only reaches the controls when Ctrl/Cmd is held (which is also how trackpad pinch arrives).
+  renderer.domElement.addEventListener(
+    "wheel",
+    (e) => {
+      if (!e.ctrlKey && !e.metaKey) e.stopImmediatePropagation();
+    },
+    { capture: true, passive: true }
+  );
+
   const controls = new OrbitControls(camera, renderer.domElement);
+  // Same on touch: OrbitControls sets touch-action:none, which swallowed vertical swipes over a
+  // viewer that is now full-width on phones. pan-y hands vertical swipes back to the page and
+  // leaves horizontal drags for rotating the model.
+  renderer.domElement.style.touchAction = "pan-y";
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.enablePan = false;
@@ -168,17 +212,17 @@ function mountViewer(container) {
       const [rx, ry, rz] = orientationFor(modelUrl);
       model.rotation.set(rx, ry, rz);
 
-      // Center + frame the model (Box3.setFromObject includes the rotation above).
-      const box = new THREE.Box3().setFromObject(model);
+      // Center + frame the model. `precise` measures the real vertices under the rotation above,
+      // not the rotated corners of the unrotated box, which overstates tilted models.
+      const box = new THREE.Box3().setFromObject(model, true);
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
 
       const maxDim = Math.max(size.x, size.y, size.z) || 1;
-      const fitDist = maxDim / (2 * Math.tan((Math.PI * camera.fov) / 360));
-      const dist = fitDist * 1.6; // padding so the model doesn't touch the frame edges
       const dir = new THREE.Vector3(0.9, 0.6, 1.1).normalize();
-      camera.position.copy(dir.multiplyScalar(dist));
+      const dist = fitDistance(size, camera, dir);
+      camera.position.copy(dir.clone().multiplyScalar(dist));
       camera.near = Math.max(maxDim / 100, 0.001);
       camera.far = maxDim * 50;
       camera.updateProjectionMatrix();

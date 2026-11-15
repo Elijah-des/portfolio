@@ -520,6 +520,11 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
 /* 3D viewers read as too dominant at full hero width — scale down and center so there's
    breathing room on both sides, consistent across every project page rather than per-page. */
 .hero-visual .viewer-3d { max-width: 82%; margin: 0 auto; }
+/* On a phone that 82% left the viewer at roughly 280x210px with the model a thumbnail inside
+   it. Use the full column and a square frame so there's room to see and drag the model. */
+@media (max-width: 720px) {
+  .hero-visual .viewer-3d { max-width: 100%; aspect-ratio: 1 / 1; }
+}
 
 .section-block { max-width: 68ch; }
 .section-block.wide { max-width: none; }
