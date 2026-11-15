@@ -1,0 +1,12 @@
+# Cache rules for Cloudflare. Without this file every asset is served with max-age=0,
+# so returning visitors re-check every image, script and model on every page view.
+
+# Vendored libraries (three.js, GSAP): versioned copies that never change in place.
+/lib/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images, models, video, PDFs: cache for an hour, then keep showing the cached copy while
+# quietly checking for a newer one (for up to a day). A replaced file with the same name
+# (e.g. a re-exported .glb) reaches every visitor within a day at most, usually on their next visit.
+/assets/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

@@ -12,3 +12,9 @@ A4 - Phase 2 Concept Development and Experience Design - Will, Lisa, Fernanda, J
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Site review outputs (report, screenshots, the brief): local reference, not part of the site
+site-review-report.md
+site-review-screenshots/
+prompt-comprehensive-site-review.md
+design-audit-checklist.md
