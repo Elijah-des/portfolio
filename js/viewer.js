@@ -68,6 +68,7 @@ const MODEL_ORIENTATION = [
 const MODEL_MATERIAL_OVERRIDES = [{ match: "gotrain", overrides: { roughness: 0.85, envMapIntensity: 0.12 } }];
 
 const CREASE_ANGLE = THREE.MathUtils.degToRad(40);
+const MAX_CREASE_TRIANGLES = 150000;
 
 function orientationFor(url) {
   const hit = MODEL_ORIENTATION.find((m) => url.includes(m.match));
@@ -206,10 +207,21 @@ function mountViewer(container) {
             // normals only between faces that meet at less than CREASE_ANGLE. Curved surfaces
             // stay smooth and real edges stay crisp. No vertex is moved: the geometry is the
             // source geometry, only its shading changes.
-            const g = new THREE.BufferGeometry();
-            g.setAttribute("position", node.geometry.attributes.position);
-            if (node.geometry.index) g.setIndex(node.geometry.index);
-            node.geometry = toCreasedNormals(mergeVertices(g), CREASE_ANGLE);
+            //
+            // Very dense meshes skip this. The weld and crease pass runs on the page's main
+            // thread and its cost grows with triangle count: the OSF cart (about 725,000
+            // triangles) froze the page for 15 seconds. A mesh that dense already has facets
+            // too small to see, so it keeps the normals it shipped with.
+            const src = node.geometry;
+            const triangles = (src.index ? src.index.count : src.attributes.position.count) / 3;
+            if (triangles > MAX_CREASE_TRIANGLES) {
+              if (!src.attributes.normal) src.computeVertexNormals();
+            } else {
+              const g = new THREE.BufferGeometry();
+              g.setAttribute("position", src.attributes.position);
+              if (src.index) g.setIndex(src.index);
+              node.geometry = toCreasedNormals(mergeVertices(g), CREASE_ANGLE);
+            }
 
           }
           node.material = CLAY_MATERIAL(materialOverrides);
