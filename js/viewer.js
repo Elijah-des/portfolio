@@ -6,7 +6,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+import { mergeVertices, toCreasedNormals } from "three/addons/utils/BufferGeometryUtils.js";
 
 // Shared PMREM environment (built lazily from the first renderer) so every viewer instance
 // gets consistent image-based lighting. A neutral studio environment keeps the clay material
@@ -59,6 +59,8 @@ const MODEL_ORIENTATION = [
 // don't — rougher + less environment reflection kills the streak without changing the standard
 // clay look everywhere else (OstrichEyes and the others already read correctly, unchanged).
 const MODEL_MATERIAL_OVERRIDES = [{ match: "gotrain", overrides: { roughness: 0.85, envMapIntensity: 0.12 } }];
+
+const CREASE_ANGLE = THREE.MathUtils.degToRad(40);
 
 function orientationFor(url) {
   const hit = MODEL_ORIENTATION.find((m) => url.includes(m.match));
@@ -189,17 +191,19 @@ function mountViewer(container) {
       model.traverse((node) => {
         if (node.isMesh) {
           if (node.geometry) {
-            // Meshes sourced from STL (raw CAD/print exports, e.g. GO Transit and SCRUFFY)
-            // triangulate every face with its own private vertices — even where two faces
-            // touch, they don't share a vertex index, just coordinates. That leaves every
-            // face join a hard, faceted edge no matter what normals get computed, reading
-            // as "fragmentation" in the render. Weld coincident vertices first so touching
-            // faces actually share indices, then compute normals across the welded mesh —
-            // this is the standard fix for faceted STL-derived geometry (not the custom
-            // Laplacian smoothing pass from an earlier iteration, which made things worse
-            // and was reverted; this is a different, well-established technique).
-            node.geometry = mergeVertices(node.geometry);
-            node.geometry.computeVertexNormals();
+            // Shade by crease angle. Fully smooth normals (weld everything, average across every
+            // join) smeared light and dark across what are really sharp corners, which read as
+            // fragmentation on the boxy, CAD-derived models (worst on SCRUFFY and GO Transit).
+            // Fully flat normals facet every curve. Instead: keep only positions (the clay
+            // material needs nothing else), weld so touching faces share vertices, then average
+            // normals only between faces that meet at less than CREASE_ANGLE. Curved surfaces
+            // stay smooth and real edges stay crisp. No vertex is moved: the geometry is the
+            // source geometry, only its shading changes.
+            const g = new THREE.BufferGeometry();
+            g.setAttribute("position", node.geometry.attributes.position);
+            if (node.geometry.index) g.setIndex(node.geometry.index);
+            node.geometry = toCreasedNormals(mergeVertices(g), CREASE_ANGLE);
+
           }
           node.material = CLAY_MATERIAL(materialOverrides);
           node.castShadow = false;

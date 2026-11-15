@@ -148,12 +148,43 @@ if (stageEl) {
     bracelet.position.x = baseX - p * driftX; // drifts gently toward center on the way down (desktop only)
     bracelet.position.z = baseZ;
     const fadeStart = 0.55;
-    stageEl.style.opacity = p < fadeStart ? 1 : Math.max(0, 1 - (p - fadeStart) / (1 - fadeStart));
+    stageEl.style.opacity = p < fadeStart ? 1 : Math.max(0, Math.min(1, 1 - (p - fadeStart) / (1 - fadeStart)));
   }
 
-  function animate() {
+  // Momentum. Scroll no longer sets the bracelet's pose directly: it only sets where the bracelet
+  // is being pushed to (targetProgress). Each frame a lightly damped spring carries the shown
+  // progress toward that target, so the bracelet picks up speed, glides on after the scroll
+  // stops and settles with a small overshoot, like something sliding on ice.
+  const SPRING = 26; // pull toward the scroll position (higher = follows more tightly)
+  const FRICTION = 5.2; // how fast the glide dies out (lower = more slippery)
+  let targetProgress = 0;
+  let shownProgress = 0;
+  let velocity = 0;
+  let lastTime = 0;
+  let heroLeft = false;
+
+  function animate(now) {
     frameId = requestAnimationFrame(animate);
+    const t = now || performance.now();
+    const dt = Math.min((t - (lastTime || t)) / 1000, 0.05);
+    lastTime = t;
+    if (prefersReducedMotion) {
+      shownProgress = targetProgress;
+      velocity = 0;
+    } else {
+      velocity += ((targetProgress - shownProgress) * SPRING - velocity * FRICTION) * dt;
+      shownProgress += velocity * dt;
+    }
+    const settled = Math.abs(targetProgress - shownProgress) < 0.0005 && Math.abs(velocity) < 0.0005;
+    if (settled) shownProgress = targetProgress;
+    if (bracelet) applyScroll(shownProgress);
     renderer.render(scene, camera);
+    // Once the hero is scrolled away and the glide has finished, stop rendering.
+    if (heroLeft && settled) {
+      cancelAnimationFrame(frameId);
+      frameId = undefined;
+      lastTime = 0;
+    }
   }
 
   loader.load(
@@ -195,15 +226,16 @@ if (stageEl) {
         trigger: ".hero-home",
         start: "top top",
         end: "bottom top",
-        scrub: 1.2,
-        onUpdate: (self) => applyScroll(self.progress),
+        onUpdate: (self) => {
+          targetProgress = self.progress;
+        },
         onLeave: () => {
-          if (frameId) cancelAnimationFrame(frameId);
-          frameId = undefined;
+          heroLeft = true; // the render loop stops itself once the glide settles
         },
         // Restart rendering when scrolling back up into the hero. Without this the render loop
         // stayed stopped after onLeave, so the bracelet froze at its last scrolled-away frame.
         onEnterBack: () => {
+          heroLeft = false;
           if (!frameId) animate();
         },
       });
