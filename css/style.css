@@ -174,7 +174,11 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
 
 /* Hero project card (OstrichEyes) — full-width, image + copy side by side, more visual weight
    than the standard grid cards below it. */
-.card-hero {
+/* .card.card-hero (2 classes), not .card-hero alone: the plain `.card { display: block }` rule
+   further down has equal specificity and comes later, so it was silently overriding this
+   grid and stacking the image full-width above the copy. That made the hero image ~650px tall
+   on desktop and pushed every other project below the first screen. */
+.card.card-hero {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: clamp(1.5rem, 4vw, 3rem);
@@ -182,11 +186,15 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
   margin-bottom: clamp(2rem, 5vw, 3rem);
 }
 .card.card-hero .thumb { aspect-ratio: 16/10; }
+.card.card-hero .card-body { padding-top: 0; }
 /* .card.card-hero (2 classes) so this reliably beats the later, equal-specificity .card h2
    rule below — the old h3 version of .card h2 had no font-size, so this collision never
    existed before the h3->h2 heading-level bump. */
 .card.card-hero h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
-@media (max-width: 720px) { .card-hero { grid-template-columns: 1fr; } }
+@media (max-width: 720px) {
+  .card.card-hero { grid-template-columns: 1fr; gap: 0; }
+  .card.card-hero .card-body { padding-top: 1rem; }
+}
 
 .card {
   display: block;
