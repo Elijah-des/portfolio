@@ -762,3 +762,20 @@ section { padding: clamp(3rem, 8vw, 6rem) 0; }
 /* ===== Utility ===== */
 .mt-lg { margin-top: clamp(2rem, 5vw, 3.5rem); }
 .center { text-align: center; }
+
+/* ===== Touch target sizes =====
+   On touch screens several text links were only 17-27px tall (shelf "View full deck" links,
+   footer links, the logo, the shelf arrows at 36px). Pad them out to roughly 44px of tap area
+   without changing the type size. Scoped to touch devices so desktop spacing is untouched. */
+@media (hover: none) {
+  .site-nav .logo { display: inline-block; padding-block: 0.45rem; }
+  .site-footer .footer-links { gap: 0; }
+  .site-footer .footer-links a { display: inline-block; padding-block: 0.55rem; }
+  .site-footer .footer-links span { padding-block: 0.3rem; }
+  .shelf-card .deck-link { margin-top: 0; padding-block: 0.8rem 0.6rem; }
+  .shelf-arrow { width: 44px; height: 44px; }
+  .project-footer-nav .text-link,
+  .phone-demo .deck-link,
+  .about-teaser .text-link,
+  .contact-cta .text-link { display: inline-block; padding-block: 0.6rem; }
+}
