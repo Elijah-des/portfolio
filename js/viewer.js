@@ -51,7 +51,14 @@ const MODEL_ORIENTATION = [
   // shaded-preview-1.png) by eye — X-13/Y90 is the one that actually reproduces their
   // composition: headband arcing left-to-right over the top, left earcup bigger/closer in the
   // foreground, right earcup smaller and receding toward the back.
-  { match: "ostricheyes", rotation: [(-13 * Math.PI) / 180, (90 * Math.PI) / 180, 0] },
+  // Update: the owner asked for the pose to match the cover render exactly. Re-matched by eye
+  // from a fresh grid of candidate angles: headband arcing over the top, the near earcup lower
+  // left with its cushion facing the viewer, the far earcup higher on the right, seen slightly
+  // from below.
+  { match: "ostricheyes", rotation: [(18 * Math.PI) / 180, (208 * Math.PI) / 180, (-16 * Math.PI) / 180] },
+  // Exported lying on its side. +90 on X puts the curved hand band on top and the bristle
+  // face underneath, the way the scrubber is held and used.
+  { match: "scruffy", rotation: [D90, 0, 0] },
 ];
 
 // Per-model material tweaks. GO Transit's long, part-cylindrical body and flat base panel catch
